@@ -28,7 +28,7 @@ void poc_x86()
                     FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
                     NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
                     OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
-                    0, /* DWORD dwFlagsAndAttributes */,
+                    0 /* DWORD dwFlagsAndAttributes */,
                     NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
@@ -60,7 +60,7 @@ void exp_x86()
                     FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
                     NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
                     OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
-                    0, /* DWORD dwFlagsAndAttributes */,
+                    0 /* DWORD dwFlagsAndAttributes */,
                     NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
@@ -163,13 +163,12 @@ void poc_x64()
         // to use for creating and opening the file. 
         // This value SHOULD be set to 0xC0000000, meaning generic read and generic write
         hDevice = CreateFileA(
-            CreateFileA(
-                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */ ,
-                    0xC0000000        /* DWORD dwDesiredAccess */ ,
+                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */,
+                    0xC0000000        /* DWORD dwDesiredAccess */,
                     FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
                     NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
-                    OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
-                    0, /* DWORD dwFlagsAndAttributes */,
+                    OPEN_EXISTING /* DWORD dwCreationDisposition */,
+                    0 /* DWORD dwFlagsAndAttributes */,
                     NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
@@ -201,7 +200,7 @@ void exp_x64()
                     FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
                     NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
                     OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
-                    0, /* DWORD dwFlagsAndAttributes */,
+                    0 /* DWORD dwFlagsAndAttributes */,
                     NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
